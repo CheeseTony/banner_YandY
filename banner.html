@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Young&amp;&amp;Yandex – Амбики</title>
+<style>
+  /*палитра Y&&Y*/
+  :root{
+    --y-bg:          #f0edff;
+    --y-yellow:      #FFDB4D;
+    --y-yellow-hot:  #FFC800;
+    --y-red:         #FC3F1D;
+    --y-ink:         #1A1A1A;
+    --y-gray:        #6B6B6B;
+    --y-violet:      #7B61FF;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  body{
+    min-height:100vh;
+    display:grid;
+    place-items:center;
+    padding:24px;
+    background:#0f0f14; 
+    font-family:"Yandex Geo","Inter","Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden;
+  }
+
+  .banner-wrap{
+    display:grid;
+    place-items:center;
+    width:1200px;
+    height:320px;
+    transform-origin:center;
+  }
+
+  /*корпус*/
+  .banner{
+    position:relative;
+    width:1200px;
+    height:320px;
+    border-radius:28px;
+    overflow:hidden;
+    isolation:isolate;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: linear-gradient(135deg, #ffffff 0%, var(--y-bg) 50%, #e2daff 100%);
+    border: 1px solid rgba(255,255,255,0.6);
+    box-shadow:
+      0 0 0 1px rgba(0,0,0,.02) inset,
+      0 30px 80px rgba(123,97,255,.2),
+      0 10px 30px rgba(0,0,0,.1);
+    animation: bannerIn 1s cubic-bezier(.2,.8,.2,1) both;
+  }
+
+  /*лёгкий внутренний блик по краю*/
+  .banner::after{
+    content:"";
+    position:absolute; inset:0;
+    border-radius:inherit;
+    pointer-events:none;
+    z-index:5;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.85),
+      inset 0 -1px 0 rgba(0,0,0,.04);
+  }
+
+  /*сетка*/
+  .pixel-grid{
+    position:absolute; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(0,0,0,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,.03) 1px, transparent 1px);
+    background-size:28px 28px;
+    -webkit-mask-image:radial-gradient(circle at 50% 50%, #000 30%, transparent 80%);
+            mask-image:radial-gradient(circle at 50% 50%, #000 30%, transparent 80%);
+    animation: gridDrift 25s linear infinite;
+  }
+
+  /*свечение*/
+  .glow{
+    position:absolute; border-radius:50%;
+    filter:blur(60px); pointer-events:none; z-index:0;
+  }
+  .glow--yellow{
+    width:320px; height:320px;
+    background:var(--y-yellow);
+    top:-120px; left:-60px; opacity:.35;
+    animation: floatGlow 12s ease-in-out infinite;
+  }
+  .glow--red{
+    width:240px; height:240px;
+    background:var(--y-red);
+    bottom:-80px; right:120px; opacity:.15;
+    animation: floatGlow 15s ease-in-out infinite reverse;
+  }
+  .glow--violet{
+    width:300px; height:300px;
+    background:var(--y-violet);
+    bottom:-140px; left:38%; opacity:.13;
+    animation: floatGlow 18s ease-in-out infinite;
+  }
+
+  /*бегущая строка*/
+  .marquee-container {
+    position: absolute;
+    top: 50%;
+    left: -10%;
+    width: 120%;
+    height: 150px;
+    transform: translateY(-50%) rotate(-6deg);
+    overflow: hidden;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.05;
+    display: flex;
+    align-items: center;
+    will-change: transform;
+  }
+
+  .marquee-content {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 25s linear infinite;
+    font-size: 90px;
+    font-weight: 900;
+    color: var(--y-ink);
+    letter-spacing: -0.02em;
+    will-change: transform;
+  }
+
+  .marquee-content span {
+    padding: 0 40px;
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  /*пиксильные картинки*/
+  .pixel-asset {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    object-fit: contain;
+  }
+
+  /*дино*/
+  .asset-dino {
+    bottom: -10px;
+    left: 80px;
+    width: 160px; 
+    height: 160px;
+    --rot: -4deg;
+    animation: floatAsset 4s ease-in-out infinite;
+  }
+
+  /*облачко*/
+  .asset-cloud {
+    top: 30px;
+    left: 180px; 
+    width: 130px;
+    height: 90px;
+    --rot: 3deg;
+    animation: floatAsset 5s ease-in-out infinite reverse;
+  }
+
+  /*цветок*/
+  .asset-flower {
+    bottom: 30px;
+    right: 80px;
+    width: 110px;
+    height: 110px;
+    --rot: 6deg;
+    animation: floatAsset 6s ease-in-out infinite;
+    animation-delay: 1.5s; /* Небольшая задержка для хаоса */
+  }
+
+  /*центральный блок*/
+  .banner-inner {
+    position:relative;
+    width: 100%;
+    height: 100%;
+    padding: 0 80px;
+    z-index: 4;
+  }
+
+  .slides-container {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .slide {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  /*анимация вопросов*/
+  .typing-wrapper {
+    display: inline-grid;
+    font-size: 42px;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--y-ink);
+    white-space: nowrap;
+    justify-content: center;
+  }
+
+  .typing-wrapper::before {
+    content: attr(data-text);
+    visibility: hidden;
+    grid-area: 1 / 1;
+  }
+
+  .typing-row {
+    grid-area: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .typing-text {
+    overflow: hidden;
+    white-space: nowrap;
+    width: 0;
+    flex: 0 0 auto;
+  }
+
+  /*курсор*/
+  .cursor {
+    flex: 0 0 auto;
+    display: inline-block;
+    width: 4px;
+    height: 44px;
+    margin-left: 8px;
+    background-color: var(--y-ink);
+    border-radius: 2px;
+    animation: blink 0.8s step-end infinite;
+  }
+
+  /*финальный слайд*/
+  .slide-offer {
+    gap: 12px;
+  }
+
+  /*логотип*/
+  .branding-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeInDown 0.8s cubic-bezier(.2,.8,.2,1) both;
+    transition: transform 0.3s ease;
+  }
+  
+  .branding-header:hover {
+    transform: scale(1.02);
+  }
+
+  .branding-header img {
+    height: 58px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,.15));
+  }
+
+  /*заголовок*/
+  .slide-offer .title{
+    font-size: 64px;
+    line-height:1.05;
+    font-weight:900;
+    letter-spacing:-.03em;
+    color:var(--y-ink);
+    white-space:nowrap;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+  }
+  
+  /*обертка для слова с маркером*/
+  .highlight-word {
+    position: relative;
+    z-index: 1;
+    display: inline-block;
+  }
+
+  /*жёлтый маркер*/
+  .highlight-word::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    right: -6px;
+    bottom: -2px;
+    height: 20px;
+    background: var(--y-yellow);
+    z-index: -1;
+    border-radius: 0;
+    opacity: 0.85;
+    transform-origin: left center;
+    transform: scaleX(0) rotate(-1deg);
+    will-change: transform;
+    mix-blend-mode: multiply; 
+  }
+
+  /*анимация чирка*/
+  .slide-offer .highlight-word::before {
+    animation: swipeMarker 32s infinite;
+  }
+
+  .slide-offer .subtitle{
+    margin: 8px auto 0 auto;
+    max-width: 680px;
+    font-size: 17px;
+    line-height: 1.55;
+    font-weight: 500;
+    color: var(--y-gray);
+  }
+  .slide-offer .subtitle b{ font-weight: 800; color: var(--y-ink); }
+
+  /*кнопка*/
+  .cta{
+    position:relative;
+    overflow:hidden;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap: 12px;
+    padding:16px 32px;
+    border-radius:999px;
+    font-size:17px;
+    font-weight:800;
+    white-space:nowrap;
+    color:#fff; 
+    background: var(--y-ink);
+    border: 2px solid var(--y-ink);
+    text-decoration:none;
+    margin: 18px auto 0 auto;
+    transition: all .3s cubic-bezier(.2,.8,.2,1);
+    box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  }
+
+  .cta::after{
+    content:"";
+    position:absolute;
+    top:0; left:-120%;
+    width:60%; height:100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+    transform: skewX(-20deg);
+    transition: left .6s ease;
+    pointer-events:none;
+  }
+  .cta:hover::after{ left:130%; }
+
+  .cta:hover{
+    transform: translateY(-3px) scale(1.03);
+    background: #fff;
+    color: var(--y-ink);
+    border-color: var(--y-ink);
+    box-shadow: 0 14px 30px rgba(0,0,0,.2), 0 0 0 4px rgba(255,255,255,.4);
+  }
+  
+  .cta svg {
+    transition: transform .3s ease;
+  }
+  .cta:hover svg {
+    transform: translateY(3px);
+  }
+
+  /*цикл анимаций*/
+  
+  /*вопрос 1 (1-8 сек.)*/
+  .slide-q1 { animation: showQ1 32s infinite; }
+  .slide-q1 .typing-text { animation: typeQ1 32s infinite steps(30, end); }
+
+  @keyframes showQ1 {
+    0%, 3%   { opacity: 0; visibility: hidden; }
+    6%, 22%  { opacity: 1; visibility: visible; }
+    25%, 100%{ opacity: 0; visibility: hidden; }
+  }
+  @keyframes typeQ1 {
+    0%, 4%   { width: 0; }
+    12%, 100%{ width: 100%; }
+  }
+
+  /*вопрос 2 (9 – 16 сек.)*/
+  .slide-q2 { animation: showQ2 32s infinite; }
+  .slide-q2 .typing-text { animation: typeQ2 32s infinite steps(30, end); }
+
+  @keyframes showQ2 {
+    0%, 27%  { opacity: 0; visibility: hidden; }
+    30%, 46% { opacity: 1; visibility: visible; }
+    50%, 100%{ opacity: 0; visibility: hidden; }
+  }
+  @keyframes typeQ2 {
+    0%, 28%  { width: 0; }
+    36%, 100%{ width: 100%; }
+  }
+
+  /*вопрос 3 (17-24 сек.)*/
+  .slide-q3 { animation: showQ3 32s infinite; }
+  .slide-q3 .typing-text { animation: typeQ3 32s infinite steps(30, end); }
+
+  @keyframes showQ3 {
+    0%, 52%  { opacity: 0; visibility: hidden; }
+    55%, 71% { opacity: 1; visibility: visible; }
+    75%, 100%{ opacity: 0; visibility: hidden; }
+  }
+  @keyframes typeQ3 {
+    0%, 53%  { width: 0; }
+    61%, 100%{ width: 100%; }
+  }
+
+  /*финальный оффер(25-32 сек.)*/
+  .slide-offer { animation: showOffer 32s infinite; }
+  @keyframes showOffer {
+    0%, 75%  { opacity: 0; visibility: hidden; }
+    78%, 96% { opacity: 1; visibility: visible; }
+    100%     { opacity: 0; visibility: hidden; }
+  }
+
+  /*вторая анимация чирка*/
+  @keyframes swipeMarker {
+    0%, 77.5%  { transform: scaleX(0) rotate(-1deg); }
+    80%, 96% { transform: scaleX(1) rotate(-1deg); }
+    100%     { transform: scaleX(0) rotate(-1deg); }
+  }
+
+  /*вспомог. анимации*/
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0; }
+  }
+  @keyframes bannerIn{
+    from{ opacity:0; transform: translateY(20px) scale(.98); }
+    to  { opacity:1; transform: translateY(0) scale(1); }
+  }
+  @keyframes fadeInDown {
+    from { opacity:0; transform: translateY(-10px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  @keyframes gridDrift{
+    to{ background-position: 28px 28px, 28px 28px; }
+  }
+  @keyframes floatGlow{
+    0%,100%{ transform: translate(0,0) scale(1); }
+    50%    { transform: translate(30px,-20px) scale(1.1); }
+  }
+  
+  /*анимация парения*/
+  @keyframes floatAsset {
+    0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+    50%      { transform: translateY(-12px) rotate(var(--rot, 0deg)); }
+  }
+
+  /*адаптив*/
+  @media (max-width:1240px){ .banner-wrap{ transform:scale(.82); } }
+  @media (max-width:1010px){ .banner-wrap{ transform:scale(.66); } }
+  @media (max-width:820px){  .banner-wrap{ transform:scale(.5);  } }
+
+  /*уменьшенное движение*/
+  @media (prefers-reduced-motion: reduce){
+    .slide-q1, .slide-q2, .slide-q3{ display:none; }
+    .slide-offer{
+      opacity:1 !important;
+      visibility:visible !important;
+      animation:none !important;
+    }
+    .cursor{ display:none; }
+    .banner, .glow, .pixel-grid, .branding-header, .pixel-asset, .marquee-content{
+      animation:none !important;
+    }
+    .slide-offer .highlight-word::before {
+      transform: scaleX(1) rotate(-1deg) !important;
+      animation: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="banner-wrap">
+    <div class="banner" role="banner">
+      
+      <div class="marquee-container" aria-hidden="true">
+        <div class="marquee-content">
+          <span>YOUNG&&YANDEX</span>
+          <span>U-TEAM</span>
+          <span>YOUNG&&YANDEX</span>
+          <span>U-TEAM</span>
+          <span>YOUNG&&YANDEX</span>
+          <span>U-TEAM</span>
+          <span>YOUNG&&YANDEX</span>
+          <span>U-TEAM</span>
+        </div>
+      </div>
+
+      <div class="glow glow--yellow" aria-hidden="true"></div>
+      <div class="glow glow--red" aria-hidden="true"></div>
+      <div class="glow glow--violet" aria-hidden="true"></div>
+      <div class="pixel-grid" aria-hidden="true"></div>
+
+       /*пиксильные картинки*/
+      <img src="dino.png" class="pixel-asset asset-dino" alt="Dino">
+      <img src="cloud.png" class="pixel-asset asset-cloud" alt="Cloud">
+      <img src="flower.png" class="pixel-asset asset-flower" alt="Flower">
+
+      <div class="banner-inner">
+        <div class="slides-container">
+
+          <div class="slide slide-q1">
+            <div class="typing-wrapper" data-text="Хочешь прокачать навыки?">
+              <div class="typing-row">
+                <div class="typing-text">Хочешь прокачать навыки?</div>
+                <div class="cursor" aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide slide-q2">
+            <div class="typing-wrapper" data-text="Готов создавать ивенты?">
+              <div class="typing-row">
+                <div class="typing-text">Готов создавать ивенты?</div>
+                <div class="cursor" aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide slide-q3">
+            <div class="typing-wrapper" data-text="Ищешь своё комьюнити?">
+              <div class="typing-row">
+                <div class="typing-text">Ищешь своё комьюнити?</div>
+                <div class="cursor" aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="slide slide-offer">
+            
+            <div class="branding-header">
+              <img src="yy-logo.svg" alt="Young&amp;&amp;Yandex">
+            </div>
+
+            <div class="title">
+              Стань <span class="highlight-word">Амбиком</span>
+            </div>
+            
+            <p class="subtitle">
+              Мы ждём тебя! Создавай <b>ивенты</b>, <b>контент</b> и <b>комьюнити</b> в своём вузе. 
+              <b>5–10 часов в неделю</b> – и целый год прокачки
+            </p>
+
+            <a class="cta" href="https://yandex.ru/yaintern/uteam" target="_blank" rel="noopener">
+              <span>Баннер под стримом</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--y-yellow)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+              </svg>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
